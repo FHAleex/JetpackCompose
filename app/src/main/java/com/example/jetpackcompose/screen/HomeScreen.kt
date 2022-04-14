@@ -9,22 +9,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcompose.models.Movie
 import com.example.jetpackcompose.models.getMovies
 import com.example.jetpackcompose.navigation.MovieScreens
 import com.example.jetpackcompose.ui.theme.JetpackComposeTheme
+import com.example.jetpackcompose.viewmodels.FavoritesViewModel
+import com.example.jetpackcompose.widgets.FavoriteIcon
 import com.example.jetpackcompose.widgets.MovieRow
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeScreen(navController: NavController = rememberNavController()) {
+fun HomeScreen(navController: NavController = rememberNavController(), viewModel: FavoritesViewModel = viewModel()) {
 
 
     var showMenu by remember {
@@ -61,20 +65,35 @@ fun HomeScreen(navController: NavController = rememberNavController()) {
             )
         }
     ) {
-        MainContent(navController = navController)
+        MainContent(navController = navController, viewModel = viewModel)
     }
 }
 
 @ExperimentalAnimationApi
 @Composable
-fun MainContent(navController: NavController, movieList: List<Movie> = getMovies()) {
+fun MainContent(navController: NavController, movieList: List<Movie> = getMovies(), viewModel: FavoritesViewModel) {
 
-    LazyColumn{
+    LazyColumn {
         items(movieList) { name ->
-            MovieRow(name) { movieId ->
-                //Log.d("MainContent","My callback value: $movieId")
-                navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
+            Row {
+                MovieRow(name,
+                    onItemClick = { movieId ->
+                        //Log.d("MainContent","My callback value: $movieId")
+                        navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
+                    },
+                    content = {
+                        FavoriteIcon(movie = name, isfavorite = viewModel.checkFavorite(name),
+                            onFavClick = { favmovie ->
+                                if (!viewModel.checkFavorite(favmovie)) {
+                                    viewModel.addFavorite(favmovie)
 
+                                } else {
+                                    viewModel.removeFavorite(favmovie)
+
+                                }
+
+                            })
+                    })
             }
         }
     }

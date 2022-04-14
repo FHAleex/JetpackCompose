@@ -18,12 +18,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcompose.models.Movie
 import com.example.jetpackcompose.models.getMovies
 import com.example.jetpackcompose.ui.theme.JetpackComposeTheme
+import com.example.jetpackcompose.viewmodels.FavoritesViewModel
 import com.example.jetpackcompose.widgets.HorizontalScrollableImageView
 import com.example.jetpackcompose.widgets.MovieRow
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jetpackcompose.widgets.FavoriteIcon
 
 
 @Composable
-fun DetailScreen(navController: NavController = rememberNavController(), movieId: String?) {
+fun DetailScreen(navController: NavController = rememberNavController(), movieId: String?, viewModel: FavoritesViewModel = viewModel()) {
 
     val movie = filterMovie(movieId = movieId)
 
@@ -44,20 +47,35 @@ fun DetailScreen(navController: NavController = rememberNavController(), movieId
             }
         }
     ) {
-        MainContent(movie = movie)
+        MainContent(movie = movie, viewmodel = viewModel)
     }
 
 }
 
 @Composable
-fun MainContent(movie: Movie) {
+fun MainContent(movie: Movie, viewmodel: FavoritesViewModel) {
 
     Surface(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()) {
 
         Column {
-            MovieRow(movie = movie)
+            MovieRow(
+                movie = movie,
+                content = {
+                    FavoriteIcon(movie = movie, isfavorite = viewmodel.checkFavorite(movie),
+                        onFavClick = { favmovie ->
+                            if (!viewmodel.checkFavorite(favmovie)) {
+                                viewmodel.addFavorite(favmovie)
+
+                            } else {
+                                viewmodel.removeFavorite(favmovie)
+
+                            }
+
+                        })
+                }
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             Divider()

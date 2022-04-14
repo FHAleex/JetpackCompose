@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -33,11 +34,17 @@ import com.example.jetpackcompose.models.getMovies
 import com.example.jetpackcompose.navigation.MovieNavigation
 import com.example.jetpackcompose.screen.HomeScreen
 import com.example.jetpackcompose.ui.theme.JetpackComposeTheme
+import com.example.jetpackcompose.viewmodels.FavoritesViewModel
 
 @ExperimentalAnimationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+     /*   val movues = getMovies()
+        val vm: FavoritesViewModel by viewModels()
+
+        val favs = vm.favoriteMovies*/
 
         setContent {
             MyApp {
